@@ -1,5 +1,6 @@
 import requests
 import configSetting
+import CacheManager
 import logging
 
 
@@ -15,9 +16,8 @@ import logging
 # username = configSetting.SF_OAuth['username']
 # password = configSetting.SF_OAuth['password']
 
-def get_access_token_json(endpoint=None, credential=None):
+def get_access_token(endpoint=None, credential=None):
     """
-
     :param endpoint: token request URI, ex. https://login.salesforce.com/services/oauth2/token
     :param credential:
         'grant_type': 'password',
@@ -33,9 +33,14 @@ def get_access_token_json(endpoint=None, credential=None):
     else:
         token_req_endpoint = endpoint
 
-    req = requests.post(token_req_endpoint, params=credential)
+    with requests.session() as s:
+        req = s.post(token_req_endpoint, params=credential)
     result = req.json()
+
     if result['access_token'] is None:
         logging.error(f"No access return: {result}")
     else:
+        cache_manager = CacheManager.CacheManager()
+        for key in result.keys():
+            cache_manager.set_cache('salesforce.com', key, result[key])
         return result
