@@ -27,6 +27,7 @@ def get_access_token(endpoint=None, credential=None):
     'password': <password>
     :return: dictionary {'access_token':<token>, 'instance_url:<url>, 'id':<id>, 'token_type':'Bearer'}
     """
+
     if endpoint is None:
         token_req_endpoint = configSetting.sf_oauth_endpoints['token_req']
         credential = configSetting.sf_oauth_cred
@@ -37,10 +38,16 @@ def get_access_token(endpoint=None, credential=None):
         req = s.post(token_req_endpoint, params=credential)
     result = req.json()
 
-    if result['access_token'] is None:
-        logging.error(f"No access return: {result}")
-    else:
-        cache_manager = CacheManager.CacheManager()
-        for key in result.keys():
-            cache_manager.set_cache('salesforce.com', key, result[key])
+    if result['access_token']:
         return result
+    else:
+        logging.error(f"No access token return: {result}")
+        exit(SystemExit())
+
+
+def set_access_token_expired(cache_manager: CacheManager = None):
+    if cache_manager is None:
+        cache_manager = CacheManager.CacheManager()
+    cache_manager.cache.remove_option('salesforce.com','access_token')
+    cache_manager.write_to_file()
+
