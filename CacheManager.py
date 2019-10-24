@@ -30,9 +30,11 @@ class CacheManager:
             self.proxy.add_section(section)
         else:
             existing_options = dict(self.proxy._sections[section])
-            options.update(existing_options)
+            # for o in options:
+            #     existing_options[o]=options[o]
+            existing_options.update(options)
 
-        self.proxy.update({section: options})
+        self.proxy.update({section: existing_options})
         self.cache = self.proxy._sections
         self.write_to_file()
 
