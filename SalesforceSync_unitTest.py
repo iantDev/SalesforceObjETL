@@ -23,7 +23,7 @@ class CacheManagerTest(unittest.TestCase):
     def test_set_cache_with_existing_section(self):
         cm = CacheManager.CacheManager()
         test_options = {'key1': 'value1', 'key2': "value2"}
-        cm.set_cache(section='salesforce.com', options=test_options)
+        cm.append_cache(section='salesforce.com', options=test_options)
         expect_values = {'salesfroce.com': test_options}
         self.assertIn(expect_values, cm.cache)
 
