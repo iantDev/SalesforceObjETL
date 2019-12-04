@@ -1,7 +1,8 @@
 import requests
-import configSetting
+import ProdconfigSetting as configSetting
 import CacheManager
 import logging
+from datetime import datetime
 
 
 # ###  Testing zeep soap WSDL ###
@@ -25,7 +26,7 @@ def get_access_token(endpoint=None, credential=None):
     'client_secret': <from API setting>,
     'username': <login>,
     'password': <password>
-    :return: dictionary {'access_token':<token>, 'instance_url:<url>, 'id':<id>, 'token_type':'Bearer'}
+    :return: dictionary {'access_token_obj':<token>, 'instance_url:<url>, 'id':<id>, 'token_type':'Bearer'}
     """
 
     if endpoint is None:
@@ -39,6 +40,8 @@ def get_access_token(endpoint=None, credential=None):
     result = req.json()
 
     if result['access_token']:
+        result['issued_UTCdatetime'] = datetime.utcfromtimestamp(float(result['issued_at']) / 1e3).astimezone()
+        result['issued_datetime'] = datetime.fromtimestamp(float(result['issued_at']) / 1e3).astimezone()
         return result
     else:
         logging.error(f"No access token return: {result}")
@@ -48,6 +51,5 @@ def get_access_token(endpoint=None, credential=None):
 def set_access_token_expired(cache_manager: CacheManager = None):
     if cache_manager is None:
         cache_manager = CacheManager.CacheManager()
-    cache_manager.cache.remove_option('salesforce.com','access_token')
+    cache_manager.cache.remove_option('salesforce.com', 'access_token_obj')
     cache_manager.write_to_file()
-

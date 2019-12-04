@@ -11,7 +11,7 @@ class SalesforceSyncTest(unittest.TestCase):
         endpoint = configSetting.sf_oauth_endpoints['token_req']
         credential = configSetting.sf_oauth_cred
         result = LoginAuthentication.get_access_token(endpoint, credential)
-        self.assertIsNotNone(result['access_token'])
+        self.assertIsNotNone(result['access_token_obj'])
         print(f"{inspect.currentframe().f_code.co_name} passed.")
 
     def test_set_access_token_expired(self):

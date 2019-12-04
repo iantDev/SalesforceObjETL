@@ -1,0 +1,7 @@
+
+{
+    "String": "varchar",
+    "Currency": "NUMERIC",
+
+
+}
