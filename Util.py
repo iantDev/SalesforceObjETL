@@ -3,6 +3,7 @@ import CacheManager
 import LoginAuthentication
 import logging
 import urllib
+from typing import Iterable
 
 
 def format_response(response: Response) -> dict:
@@ -33,3 +34,11 @@ def response_handler(response: Response):
             logging.error('Verify that the logged-in user has appropriate permissions.', response.text)
     elif response.status_code == '200':
         return response.json()
+
+
+def get_by_path(item, nested_path: Iterable):
+    for level in nested_path:
+        parent = item
+        item = item[level]
+    return item
+
