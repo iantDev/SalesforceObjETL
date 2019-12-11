@@ -1,7 +1,8 @@
 from pathlib import Path
 import logging
-import psycog2
+import psycopg2
 import configSetting
+
 
 def load_rest_result(data: dict, connection: dict) -> None:
     """
@@ -15,6 +16,10 @@ def load_rest_result(data: dict, connection: dict) -> None:
 
 
 def load_to_postgres(connection: dict, data):
+    pass
+
+
+def csv_to_postgres(connection: dict, file_path: str, field_list: list) -> None:
     pass
 
 
@@ -38,7 +43,8 @@ def data_to_csv(data, path: str, file_name: str, delimiter="|") -> None:
         elif isinstance(data, str):
             output += f"data\n"
         else:
-            logging.error(f"Data element must be in string, list, dict, tuple, or set data type. Data is not output to {file_path}. Item = {str(item)}.")
+            logging.error(
+                f"Data element must be in string, list, dict, tuple, or set data type. Data is not output to {file_path}. Item = {str(item)}.")
 
     with open(file_path, 'w') as f:
         f.write(output)
