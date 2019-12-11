@@ -11,7 +11,7 @@ create TABLE stg.Account (
     Type varchar (40) Null,
     AccountSource varchar (255) Null,
     Account_Health__c varchar (255) Null,
-    Account_Region__cc varchar (255) Null,
+    Account_Region__c varchar (255) Null,
     Account_Status__c varchar (255) Null,
     AnnualRevenue NUMERIC (18,0) Null,
     IsPartner Boolean  Null,
