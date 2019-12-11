@@ -1,5 +1,4 @@
 
-
 create TABLE stg.Account (
     tblId serial,
     OwnerId char (18) Null,
@@ -18,10 +17,8 @@ create TABLE stg.Account (
     BillingStreet varchar (255) Null,
     BillingCity varchar (40) Null,
     BillingState varchar (80) Null,
-    BillingStateCode varchar (20) Null,
     BillingPostalCode varchar (20) Null,
     BillingCountry varchar (80) Null,
-    BillingCountryCode varchar (20) Null,
     Brand__c Boolean  Null,
     Brand_Affiliation__c char (18) Null,
     CreatedById char (18) Null,
