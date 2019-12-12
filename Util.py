@@ -42,3 +42,12 @@ def get_by_path(item, nested_path: Iterable):
         item = item[level]
     return item
 
+
+def iterable_to_line(item, delimiter="|") -> str:
+    if isinstance(item, (list,set,tuple)):
+        return delimiter.join(map(str,item))
+    elif isinstance(item, dict):
+        return delimiter.join(str(v) for v in item.values())
+    else:
+        logging.error(f"Item is not a dict or iterable data type list, set, or tuple. Item = {str(item)}")
+        return ""
