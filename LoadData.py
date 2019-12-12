@@ -1,8 +1,11 @@
+from contextlib import contextmanager
 from pathlib import Path
 import logging
-import psycopg2
-import configSetting
-
+import psycopg2, psycopg2.pool
+import ProdconfigSetting as configSetting
+from io import StringIO
+from typing import Iterable
+import Util
 
 def load_rest_result(data: dict, connection: dict) -> None:
     """
@@ -19,11 +22,12 @@ def load_to_postgres(connection: dict, data):
     pass
 
 
-def csv_to_postgres(connection: dict, file_path: str, field_list: list) -> None:
+def file_to_postgres(connection, file_path: str, field_list: list) -> None:
+
     pass
 
 
-def data_to_csv(data, path: str, file_name: str, delimiter="|") -> None:
+def data_to_file(data, path: str, file_name: str, delimiter="|") -> None:
     """
     :param data: must be one of the data types in dict, list, set, tuple, or string.
     :param path: ex. /home/users
@@ -49,14 +53,33 @@ def data_to_csv(data, path: str, file_name: str, delimiter="|") -> None:
     with open(file_path, 'w') as f:
         f.write(output)
 
+def data_to_mem(data) -> StringIO:
+    """
+    :param data: Iterable (set, list, tuple)
+    :return:  StringIO object in table-like format.
+    """
+    obj = StringIO()
 
-def dict_to_line(item: dict, delimiter="|") -> str:
-    return delimiter.join(str(v) for v in item.values())
+    for item in data:
+        obj.write(f"{Util.iterable_to_line(item)}\n")
+
+    return obj
+
+@contextmanager
+def cursor_op(conn_pool: psycopg2.pool.SimpleConnectionPool):
+    conn = conn_pool.getconn()
+    conn.autocommit = True
+    cur:psycopg2._psycopg.cursor = conn.cursor()
+    try:
+        yield conn, cur
+    finally:
+        cur.close()
+        conn_pool.putconn(conn)
 
 
-def iterable_to_line(item, delimiter="|") -> str:
-    if isinstance(item, (list, set, tuple)):
-        return delimiter.join(item)
-    else:
-        logging.error("Item is not a data type of list, set, or tuple.")
-        return ""
+
+
+
+
+
+
