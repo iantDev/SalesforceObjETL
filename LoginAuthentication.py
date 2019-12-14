@@ -40,8 +40,11 @@ def get_access_token(endpoint=None, credential=None):
     result = req.json()
 
     if result['access_token']:
-        result['issued_UTCdatetime'] = datetime.utcfromtimestamp(float(result['issued_at']) / 1e3).astimezone()
+        #
+        # timestamp = datetime.now().astimezone()
+        # utcTime = timestamp.utcfromtimestamp(timestamp.timestamp())
         result['issued_datetime'] = datetime.fromtimestamp(float(result['issued_at']) / 1e3).astimezone()
+        result['issued_UTCdatetime'] = datetime.utcfromtimestamp(result['issued_datetime'].timestamp())
         return result
     else:
         logging.error(f"No access token return: {result}")
