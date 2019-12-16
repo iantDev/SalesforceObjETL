@@ -117,14 +117,17 @@ def get_bulk_query_result(job_id, access_token_obj: dict) -> dict:
     return Util.format_response(response)
 
 
-def rest_query_request(query: str, access_token_obj: dict) -> dict:
+def rest_query_request(query: str, access_token_obj: dict, endpoint:str = None) -> dict:
     """
     :param query: SOQL statment, ex. select name from Account
     :param access_token_obj: key = instance_url, access_token_obj
-    :return: dict, key = status_code, url, data:{ totalSize, done, [records] }; records[n]:{attributes, field_1:value ... field_n}
+    :return: dict, key = status_code, url, data:{ totalSize, done, nextRecordsUrl(when have more records), [records] }; records[n]:{attributes, field_1:value ... field_n}
     """
-    query = f"q={query}".replace(" ", "+")
-    endpoint = f"{access_token_obj['instance_url']}{configSetting.sf_rest_api['uri']}"
+    if query is not None:
+        query = f"q={query}".replace(" ", "+")
+    if endpoint is None:
+        endpoint = f"{access_token_obj['instance_url']}{configSetting.sf_rest_api['uri']}"
+
     try:
         response = requests.get(endpoint, params=query, headers={'Authorization': f'Bearer {access_token_obj["access_token"]}'})
         return Util.format_response(response)
