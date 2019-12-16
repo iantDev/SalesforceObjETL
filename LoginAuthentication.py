@@ -2,14 +2,7 @@ import requests
 import ProdconfigSetting as configSetting
 import CacheManager
 import logging
-from datetime import datetime
-
-
-# ###  Testing zeep soap WSDL ###
-# client = zeep.Client(wsdl='http://www.soapclient.com/xml/soapresponder.wsdl')
-# print(client.service.Method1("zeep", "trying the package"))
-
-# soap_client = zeep.Client(wsdl=configSetting.file_path['salesforce_WSDL'])
+from datetime import datetime, timedelta
 
 # grant_type = configSetting.SF_OAuth['grant_type']
 # client_id = configSetting.SF_OAuth['client_id']
@@ -18,7 +11,7 @@ from datetime import datetime
 # password = configSetting.SF_OAuth['password']
 
 def get_access_token(endpoint=None, credential=None):
-    """
+    """Read from cache or retrieve from endpoint with credential.
     :param endpoint: token request URI, ex. https://login.salesforce.com/services/oauth2/token
     :param credential:
         'grant_type': 'password',
@@ -28,6 +21,9 @@ def get_access_token(endpoint=None, credential=None):
     'password': <password>
     :return: dictionary {'access_token_obj':<token>, 'instance_url:<url>, 'id':<id>, 'token_type':'Bearer'}
     """
+    cm = CacheManager.CacheManager()
+    if datetime.fromisoformat(cm.cache['access_token_obj']['issued_datetime']) + timedelta(hours=1) > datetime.now().astimezone():
+        return cm.cache['access_token_obj']
 
     if endpoint is None:
         token_req_endpoint = configSetting.sf_oauth_endpoints['token_req']
@@ -45,6 +41,7 @@ def get_access_token(endpoint=None, credential=None):
         # utcTime = timestamp.utcfromtimestamp(timestamp.timestamp())
         result['issued_datetime'] = datetime.fromtimestamp(float(result['issued_at']) / 1e3).astimezone()
         result['issued_UTCdatetime'] = datetime.utcfromtimestamp(result['issued_datetime'].timestamp())
+        cm.reset_cache('access_token_obj', result)
         return result
     else:
         logging.error(f"No access token return: {result}")
