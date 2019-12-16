@@ -4,6 +4,7 @@ import LoginAuthentication
 import logging
 import urllib
 from typing import Iterable
+import ProdconfigSetting as configSetting
 
 
 def format_response(response: Response) -> dict:
@@ -43,11 +44,11 @@ def get_by_path(item, nested_path: Iterable):
     return item
 
 
-def iterable_to_line(item, delimiter="|") -> str:
-    if isinstance(item, (list,set,tuple)):
-        return delimiter.join(map(str,item))
+def iterable_to_line(item, delimiter=configSetting.delimiter) -> str:
+    if isinstance(item, (list, set, tuple)):
+        return delimiter.join(map(str, item)).replace('\r', ' ').replace('\n', ' ').replace('\\', ' ')
     elif isinstance(item, dict):
-        return delimiter.join(str(v) for v in item.values())
+        return delimiter.join(str(v) for v in item.values()).replace('\r', ' ').replace('\n', ' ').replace('\\', ' ')
     else:
-        logging.error(f"Item is not a dict or iterable data type list, set, or tuple. Item = {str(item)}")
+        logging.error(f"Item is not an iterable data type in dict, list, set, or tuple. Item = {str(item)}")
         return ""
