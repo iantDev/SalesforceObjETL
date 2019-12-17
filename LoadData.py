@@ -2,12 +2,12 @@ from contextlib import contextmanager
 from os import sep
 import logging
 import psycopg2, psycopg2.pool
-from psycopg2.extras import LoggingCursor
 import ProdconfigSetting as configSetting
 from io import StringIO
 from typing import Iterable
-import Util
+import Util, ExtractByObject, LoginAuthentication
 from datetime import date, datetime
+import json
 
 
 def load_rest_result(data: dict, connection: dict) -> None:
@@ -93,6 +93,18 @@ def data_to_insert_values(data: list) -> str:
         result += f"({row[:-1]}),"
         # result +="(" + ','.join([f"'{str(item[k])}'" for k in item.keys()]) + "),"
     return result[:-1]
+
+
+def sobject_schema_to_file (sobject: str, file_path: str = None):
+    if file_path is None:
+        file_path = f'{sobject}_schema.txt'
+    result = ExtractByObject.get_metadata(sobject, LoginAuthentication.get_access_token())
+    field_path = ['fields']
+    key_to_look = ('name', 'length', 'type')
+    schema_info: list = Util.get_by_path(result, field_path)
+    fields_schema = [{k: v for k, v in item.items() if k in key_to_look} for item in schema_info]
+    with open(file_path, 'w') as f:
+        f.write(json.dumps(fields_schema, indent='\t'))
 
 
 @contextmanager
