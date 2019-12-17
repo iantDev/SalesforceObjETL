@@ -1,0 +1,21 @@
+create table stg.User (
+    tblid serial,
+    Id char(18) Null,
+    Username varchar (255) Null,
+    Name varchar (255) Null,
+    CompanyName varchar (255) Null,
+    Division varchar (255) Null,
+    Department varchar (255) Null,
+    Title varchar (255) Null,
+    Alias varchar (255) Null,
+    IsActive boolean Null,
+    LocaleSidKey varchar (255) Null,
+    LanguageLocaleKey varchar (255) Null,
+    EmployeeNumber varchar (255) Null,
+    ManagerId varchar (255) Null,
+    LastModifiedDate timestamp with time zone Null,
+    SystemModstamp timestamp with time zone Null,
+    ContactId varchar (255) Null,
+    CallCenterId varchar (255) Null,
+    CONSTRAINT PK_stg_user PRIMARY KEY (Id, SystemModstamp)
+)
