@@ -22,19 +22,23 @@ def get_sf_data(query: str,access_token_obj :dict) -> list:
 
 
 def main():
-    access_token_obj = LoginAuthentication.get_access_token()
-    query = f"select {configSetting.sf_data_fields['Account']} from Account where id ='0013000000bm1V3AAI'"
-    data = get_sf_data(query, access_token_obj)
+    obj_names = configSetting.sobject_to_process
+    for obj_name in obj_names:
+        access_token_obj = LoginAuthentication.get_access_token()
+        query = f"select {configSetting.sf_data_fields[obj_name]} from {obj_name}"
+        data = get_sf_data(query, access_token_obj)
 
-    [item.pop('attributes') for item in data if 'attributes' in item]
-    mem_obj = LoadData.data_to_mem(data)
-    obj = mem_obj.getvalue()
-    conn_pool: psycopg2.pool.SimpleConnectionPool = psycopg2.pool.SimpleConnectionPool(1, 10,
-                                                                                       **configSetting.db['data_prod'])
-    mem_obj.seek(0)
-    with LoadData.cursor_op(conn_pool) as (conn, cur):
-        cur.copy_from(mem_obj, 'stg.Account', sep=configSetting.delimiter, null='None',
-                      columns=[i.strip(' \t\n\r') for i in configSetting.sf_data_fields['Account'].split(",")])
+        [item.pop('attributes') for item in data if 'attributes' in item]
+        mem_obj = LoadData.data_to_mem(data)
+        obj = mem_obj.getvalue()
+        conn_pool: psycopg2.pool.SimpleConnectionPool = psycopg2.pool.SimpleConnectionPool(1, 10,
+                                                                                           **configSetting.db['data_prod'])
+        mem_obj.seek(0)
+        with LoadData.cursor_op(conn_pool) as (conn, cur):
+            cur.execute(f"truncate table stg{obj_name};")
+            cur.copy_from(mem_obj, f'stg.{obj_name}', sep=configSetting.delimiter, null='None',
+                          columns=[i.strip(' \t\n\r') for i in configSetting.sf_data_fields[obj_name].split(",")])
+            cur.execute(f" select stg.proc_{obj_name.lower()}_update_from_stg()" )
 
     # TODO: handling non-200 response
     # if response.status_code == 401:  # The session ID or OAuth token used has expired or is invalid.
