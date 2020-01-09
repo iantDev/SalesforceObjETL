@@ -5,6 +5,7 @@ import logging
 import urllib
 from typing import Iterable
 import ProdconfigSetting as configSetting
+import json
 
 
 def format_response(response: Response) -> dict:
@@ -52,3 +53,17 @@ def iterable_to_line(item, delimiter=configSetting.delimiter) -> str:
     else:
         logging.error(f"Item is not an iterable data type in dict, list, set, or tuple. Item = {str(item)}")
         return ""
+
+def filter_schema(schema:dict, field_path:list, key_to_look:set, file_path:str = None):
+    schema_info: list = get_by_path(schema, field_path)
+    fields_schema = dict(enumerate([{k: v for k, v in item.items() if k in key_to_look} for item in schema_info]))
+    if file_path:
+        with open(file_path, 'w') as f:
+            f.write(json.dumps(fields_schema), indent='\t')
+
+def print_db_col_def(col_def: dict, col_key_name:str, col_data_type_key_name:str, data_type_mapping: dict):
+    for field in col_def:
+        if field[col_data_type_key_name] in data_type_mapping.keys():
+            print(f"{field[col_key_name]} {data_type_mapping[field[col_data_type_key_name]]} Null,")
+        else:
+            print(f"{field[col_key_name]} {field[col_data_type_key_name]} Null,")
