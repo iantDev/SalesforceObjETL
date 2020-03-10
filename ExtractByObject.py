@@ -124,7 +124,7 @@ def rest_query_request(query: str, access_token_obj: dict, endpoint:str = None) 
     :return: dict, key = status_code, url, data:{ totalSize, done, nextRecordsUrl(when have more records), [records] }; records[n]:{attributes, field_1:value ... field_n}
     """
     if query is not None:
-        query = f"q={query}".replace(" ", "+")
+        query = f"q={query}".replace("+","%2B").replace(" ", "+")
     if endpoint is None:
         endpoint = f"{access_token_obj['instance_url']}{configSetting.sf_rest_api['uri']}"
 
