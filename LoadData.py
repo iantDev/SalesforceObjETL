@@ -31,7 +31,7 @@ def file_to_postgres(connection, file_path: str, field_list: list) -> None:
 
 def data_to_file(data, file_path: str, delimiter=configSetting.delimiter) -> None:
     """
-    :param data: must be one of the data types in dict, list, set, tuple, or string.`
+    :param data: must be one of the data types in dict, list, set, tuple, StringIO, or string.`
     :param file_path: ex. /dirctory/sf_[obj_name]_[yyyy_dd_mm]_n
     :param delimiter: char that separates the fields/columns
     :return: None
@@ -108,7 +108,7 @@ def sobject_schema_to_file (sobject: str, file_path: str = None):
 
 
 @contextmanager
-def cursor_op(conn_pool: psycopg2.pool.SimpleConnectionPool):
+def  cursor_op(conn_pool: psycopg2.pool.SimpleConnectionPool):
     conn = conn_pool.getconn()
     conn.autocommit = True
     # cur: psycopg2._psycopg.cursor = conn.cursor(cursor_factory=LoggingCursor)

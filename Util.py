@@ -60,6 +60,7 @@ def print_col_def_from_file(col_def: dict, col_key_name:str, col_data_type_key_n
         col_def = json.loads(f.read())
     for field in col_def:
         if field[col_data_type_key_name] in data_type_mapping.keys():
+
             print(f"{field[col_key_name]} {data_type_mapping[field[col_data_type_key_name]]} Null,")
         else:
             print(f"{field[col_key_name]} {field[col_data_type_key_name]} Null,")
