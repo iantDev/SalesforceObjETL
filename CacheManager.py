@@ -1,4 +1,4 @@
-import configSetting
+import ProdconfigSetting as configSetting
 import configparser
 import LoginAuthentication
 
