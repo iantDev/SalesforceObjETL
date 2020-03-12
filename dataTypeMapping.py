@@ -1,5 +1,5 @@
 salesforce_obj_to_postgres ={
-    'length_1_var' : ('textarea','string', 'id')
+    'length_1_var' : ('textarea','string', 'id'),
     "string": "varchar (255)",
     "id": "char(18)",
     "reference": "varchar (255)",
