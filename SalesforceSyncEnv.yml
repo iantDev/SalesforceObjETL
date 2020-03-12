@@ -1,35 +1,9 @@
 name: SalesforceSync
 channels:
-  - defaults
-  - anaconda
   - https://repo.anaconda.com/pkgs/main
 dependencies:
-  - asn1crypto=1.2.0
-  - ca-certificates=2019.11.27
-  - certifi=2019.11.28
-  - cffi=1.13.2
-  - chardet=3.0.4
-  - cryptography=2.8
-  - idna=2.8
-  - krb5=1.16.1
-  - libpq=11.2
-  - openssl=1.1.1
-  - pip=19.3.1
-  - psycopg2=2.8.4
-  - pycparser=2.19
-  - pyopenssl=19.1.0
-  - pysocks=1.7.1
-  - python=3.7.5
-  - requests=2.22.0
-  - setuptools=42.0.2
-  - six=1.13.0
-  - sqlite=3.30.1
-  - tk=8.6.8
-  - urllib3=1.25.7
-  - vc=14.1
-  - vs2015_runtime=14.16.27012
-  - wheel=0.33.6
-  - win_inet_pton=1.1.0
-  - wincertstore=0.2
-  - zlib=1.2.11
+  - python=3.7
+  - psycopg2
+  - requests
+
 
