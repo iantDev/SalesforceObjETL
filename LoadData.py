@@ -65,15 +65,23 @@ def data_to_file(data, file_path: str, delimiter=configSetting.delimiter) -> Non
         print(err)
 
 
-def data_to_mem(data) -> StringIO:
+def data_to_mem(data,add_data_row :str = None) -> StringIO:
     """
-    :param data: Iterable (set, list, tuple)
+    :param data: Iterable (set, list, tuple), string
+    :param add_data_row: row data with proper format, with the correct field delimiter matching data obj.
     :return:  StringIO object in table-like format.
     """
-    obj = StringIO()
+    if not isinstance(data, StringIO):
+        obj = StringIO()
+        if isinstance(data, (list, set, tuple)):
+            obj.write(f"{Util.iterable_to_line(data)}\n")
+        elif isinstance(data, str) :
+            obj.write(data)
+    else:
+        obj = data
 
-    for item in data:
-        obj.write(f"{Util.iterable_to_line(item)}\n")
+    if add_data_row:
+        obj.write(f"{add_data_row}\n")
 
     return obj
 
@@ -95,10 +103,10 @@ def data_to_insert_values(data: list) -> str:
     return result[:-1]
 
 
-def sobject_schema_to_file (sobject: str, file_path: str = None):
+def sobject_schema_to_file (sobject_name: str, file_path: str = None):
     if file_path is None:
-        file_path = f'{sobject}_schema.txt'
-    result = ExtractByObject.get_metadata(sobject, LoginAuthentication.get_access_token())
+        file_path = f'{sobject_name}_schema.txt'
+    result = ExtractByObject.get_metadata(sobject_name, LoginAuthentication.get_access_token())
     field_path = ['fields']
     key_to_look = ('name', 'length', 'type')
     schema_info: list = Util.get_by_path(result, field_path)
