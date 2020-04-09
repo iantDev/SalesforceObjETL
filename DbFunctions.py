@@ -1,6 +1,7 @@
 import ProdconfigSetting as configSetting
 import psycopg2
 import datetime
+import pytz
 
 db_config = configSetting.db['data_prod']
 
@@ -16,11 +17,20 @@ def get_conn_cur(db_config: dict = db_config) -> (psycopg2._psycopg.connection, 
 
 
 def table_last_timestamp(table_name: str, cur: psycopg2._psycopg.cursor) -> datetime.datetime:
+    """
+    Return latest SystemModstamp in a given table name in Salesforce database in Postgres. IF result is none, return 1980-01-01T00:00:00+0000 timestamp.
+    :param table_name: table name in Salesforce database.
+    :param cur: Pyscopy2 cursor object.
+    :return: datetime.
+    """
     query = f"select SystemModstamp from public.{table_name} order by SystemModstamp desc limit 1;"
     print(query)
     cur.execute(query)
-    last_ts = cur.fetchone()[0]
-    return last_ts
+    result = cur.fetchone()
+    if result is not None:
+        return result[0]
+    else:
+        return datetime.datetime(year=1980,month=1,day=1,hour=0,minute=0,second=0,tzinfo=pytz.timezone('UTC'))
 
 # last_ts.strftime('%Y-%m-%d %H:%M:%S')
 
